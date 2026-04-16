@@ -108,7 +108,7 @@
 2. Скачайте датасет [online_retail.csv]([https://archive.ics.uci.edu/static/public/352/online+retail.zip](https://www.kaggle.com/datasets/mohadesehemamipour/online-retail-personalized-product-recommendation)) и поместите в папку, доступную для импорта.
 3. Выполните скрипты из папки `sql/` по порядку.
 
-##  Визуализация (опционально)
+##  Визуализация 
 Вы можете подключить BI‑инструмент (Tableau Public, Power BI) к результатам запросов и добавить скриншоты в папку `images/`.
 
 ##  Автор
