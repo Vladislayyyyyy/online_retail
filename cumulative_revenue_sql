@@ -1,0 +1,13 @@
+WITH daily_revenue AS (
+    SELECT
+        DATE(InvoiceDate) AS order_date,
+        ROUND(SUM(Revenue), 2) AS daily_revenue
+    FROM sales_clean
+    GROUP BY DATE(InvoiceDate)
+)
+SELECT
+    order_date,
+    daily_revenue,
+    ROUND(SUM(daily_revenue) OVER (ORDER BY order_date), 2) AS cumulative_revenue
+FROM daily_revenue
+ORDER BY order_date;
