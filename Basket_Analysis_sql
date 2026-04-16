@@ -1,0 +1,28 @@
+--товары которые покупают совместно
+WITH order_items AS (
+    SELECT
+        InvoiceNo,
+        StockCode,
+        Description
+    FROM sales_clean
+    GROUP BY InvoiceNo, StockCode, Description  -- чтобы убрать дубли внутри заказа
+),
+product_pairs AS (
+    SELECT
+        a.Description AS product_a,
+        b.Description AS product_b,
+        COUNT(DISTINCT a.InvoiceNo) AS times_bought_together
+    FROM order_items a
+    JOIN order_items b
+        ON a.InvoiceNo = b.InvoiceNo
+        AND a.StockCode < b.StockCode  -- чтобы пары не дублировались (A,B и B,A)
+    GROUP BY a.Description, b.Description
+)
+SELECT
+    product_a,
+    product_b,
+    times_bought_together
+FROM product_pairs
+WHERE times_bought_together >= 5  -- порог вхожденияч
+ORDER BY times_bought_together DESC
+LIMIT 20;
