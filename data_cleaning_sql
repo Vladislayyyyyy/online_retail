@@ -1,0 +1,41 @@
+SELECT
+    COUNT(*) AS total_rows,
+    COUNT(CustomerID) AS non_null_customer,
+    COUNT(*) - COUNT(CustomerID) AS missing_customer
+FROM online_retail;
+
+--Количество и доля возвратных транзакций
+SELECT
+    CASE
+        WHEN InvoiceNo LIKE 'C%' THEN 'Cancelled'
+        ELSE 'Completed'
+    END AS order_type,
+    COUNT(*) AS row_count,
+    ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS percentage
+FROM online_retail
+GROUP BY order_type;
+
+-- Строки с нулевым или отрицательным количеством и ценой
+SELECT
+    COUNT(*) FILTER (WHERE Quantity <= 0) AS invalid_quantity,
+    COUNT(*) FILTER (WHERE UnitPrice <= 0) AS invalid_price
+FROM online_retail;
+
+-- создание новой чистой таблицы
+CREATE TABLE sales_clean AS
+SELECT
+    InvoiceNo,
+    StockCode,
+    Description,
+    Quantity,
+    InvoiceDate,
+    UnitPrice,
+    CustomerID,
+    Country,
+    ROUND(Quantity * UnitPrice, 2) AS Revenue
+FROM online_retail
+WHERE
+    Quantity > 0                     
+    AND UnitPrice > 0                
+    AND CustomerID IS NOT NULL       
+    AND InvoiceNo NOT LIKE 'C%';     
