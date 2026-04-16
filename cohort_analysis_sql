@@ -1,4 +1,3 @@
-
 -- когортыный анализ
 WITH cohorts AS (
     SELECT
