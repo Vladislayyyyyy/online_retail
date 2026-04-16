@@ -1,0 +1,59 @@
+
+-- когортыный анализ
+WITH cohorts AS (
+    SELECT
+        CustomerID,
+        DATE_TRUNC('month', MIN(InvoiceDate)) AS cohort_month
+    FROM sales_clean
+    GROUP BY CustomerID
+),
+cohort_data AS (
+    SELECT
+        c.cohort_month,
+        DATE_TRUNC('month', s.InvoiceDate) AS purchase_month,
+        COUNT(DISTINCT s.CustomerID) AS customers
+    FROM sales_clean s
+    JOIN cohorts c ON s.CustomerID = c.CustomerID
+    GROUP BY c.cohort_month, purchase_month
+)
+SELECT
+    cohort_month,
+    purchase_month,
+    customers,
+    EXTRACT(MONTH FROM AGE(purchase_month, cohort_month)) AS month_number
+FROM cohort_data
+ORDER BY cohort_month, purchase_month;
+
+-- матрица удержания
+WITH cohorts AS (
+    SELECT
+        CustomerID,
+        DATE_TRUNC('month', MIN(InvoiceDate)) AS cohort_month
+    FROM sales_clean
+    GROUP BY CustomerID
+),
+cohort_data AS (
+    SELECT
+        c.cohort_month,
+        DATE_TRUNC('month', s.InvoiceDate) AS purchase_month,
+        COUNT(DISTINCT s.CustomerID) AS customers
+    FROM sales_clean s
+    JOIN cohorts c ON s.CustomerID = c.CustomerID
+    GROUP BY c.cohort_month, purchase_month
+),
+cohort_size AS (
+    SELECT cohort_month, customers AS initial_customers
+    FROM cohort_data
+    WHERE purchase_month = cohort_month
+)
+SELECT
+    cd.cohort_month,
+    cs.initial_customers,
+    MAX(CASE WHEN EXTRACT(MONTH FROM AGE(cd.purchase_month, cd.cohort_month)) = 0 THEN cd.customers ELSE 0 END) AS month_0,
+    MAX(CASE WHEN EXTRACT(MONTH FROM AGE(cd.purchase_month, cd.cohort_month)) = 1 THEN cd.customers ELSE 0 END) AS month_1,
+    MAX(CASE WHEN EXTRACT(MONTH FROM AGE(cd.purchase_month, cd.cohort_month)) = 2 THEN cd.customers ELSE 0 END) AS month_2,
+    MAX(CASE WHEN EXTRACT(MONTH FROM AGE(cd.purchase_month, cd.cohort_month)) = 3 THEN cd.customers ELSE 0 END) AS month_3
+FROM cohort_data cd
+JOIN cohort_size cs ON cd.cohort_month = cs.cohort_month
+GROUP BY cd.cohort_month, cs.initial_customers
+ORDER BY cd.cohort_month;
