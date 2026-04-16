@@ -27,7 +27,7 @@
 - Отфильтрованы записи без `CustomerID`
 - Создана чистая таблица `sales_clean` с колонкой `Revenue = Quantity * UnitPrice`
 
-📁 [01_data_cleaning.sql](sql/01_data_cleaning.sql)
+📁 [01_data_cleaning.sql]([sql/01_data_cleaning.sql](https://github.com/Vladislayyyyyy/online_retail/blob/main/data_cleaning_sql))
 
 ##  Этап 2: Исследовательский анализ (EDA)
 **Основные выводы:**
