@@ -1,0 +1,89 @@
+-- анализ ассортимента
+SELECT
+    COUNT(DISTINCT InvoiceNo) AS total_orders,
+    COUNT(DISTINCT CustomerID) AS unique_customers,
+    SUM(Quantity) AS total_items_sold,
+    ROUND(SUM(Revenue), 2) AS total_revenue,
+    ROUND(AVG(Revenue), 2) AS avg_order_value,
+    ROUND(SUM(Revenue) / COUNT(DISTINCT CustomerID), 2) AS revenue_per_customer
+FROM sales_clean;
+
+-- анализ заказов по странам(топ 15)
+SELECT
+    Country,
+    COUNT(DISTINCT InvoiceNo) AS orders,
+    ROUND(SUM(Revenue), 2) AS revenue,
+    ROUND(AVG(Revenue), 2) AS avg_order_value,
+    ROUND(100.0 * SUM(Revenue) / SUM(SUM(Revenue)) OVER (), 2) AS revenue_share
+FROM sales_clean
+GROUP BY Country
+ORDER BY revenue DESC
+LIMIT 15;
+
+-- топт оваров по количеству заказов(топ 15)
+SELECT
+    StockCode,
+    Description,
+    SUM(Quantity) AS total_qty,
+    COUNT(DISTINCT InvoiceNo) AS order_count,
+    ROUND(SUM(Revenue), 2) AS revenue
+FROM sales_clean
+GROUP BY StockCode, Description
+ORDER BY total_qty DESC
+LIMIT 15;
+
+-- топ товаров по выручке(топ 15)
+SELECT
+    StockCode,
+    Description,
+    ROUND(SUM(Revenue), 2) AS revenue,
+    SUM(Quantity) AS total_qty,
+    COUNT(DISTINCT InvoiceNo) AS order_count
+FROM sales_clean
+GROUP BY StockCode, Description
+ORDER BY revenue DESC
+LIMIT 15;
+
+
+-- аналитика заказов по дням недели
+SELECT
+    CASE EXTRACT(DOW FROM InvoiceDate)
+        WHEN 0 THEN 'Sunday'
+        WHEN 1 THEN 'Monday'
+        WHEN 2 THEN 'Tuesday'
+        WHEN 3 THEN 'Wednesday'
+        WHEN 4 THEN 'Thursday'
+        WHEN 5 THEN 'Friday'
+        WHEN 6 THEN 'Saturday'
+    END AS weekday,
+    COUNT(DISTINCT InvoiceNo) AS orders,
+    ROUND(SUM(Revenue), 2) AS revenue
+FROM sales_clean
+GROUP BY weekday
+ORDER BY orders DESC;
+
+-- анализ возвратов
+WITH totals AS (
+    SELECT
+        COUNT(DISTINCT CASE WHEN Quantity > 0 THEN InvoiceNo END) AS completed_orders,
+        COUNT(DISTINCT CASE WHEN Quantity < 0 THEN InvoiceNo END) AS cancelled_orders
+    FROM online_retail
+    WHERE CustomerID IS NOT NULL
+)
+SELECT
+    completed_orders,
+    cancelled_orders,
+    ROUND(100.0 * cancelled_orders / (completed_orders + cancelled_orders), 2) AS cancel_rate
+FROM totals;
+
+-- топ возвратных товаров(топ 10)
+SELECT
+    StockCode,
+    Description,
+    ABS(SUM(Quantity)) AS returned_qty,
+    COUNT(DISTINCT InvoiceNo) AS return_orders
+FROM online_retail
+WHERE Quantity < 0 AND CustomerID IS NOT NULL
+GROUP BY StockCode, Description
+ORDER BY returned_qty DESC
+LIMIT 10;
