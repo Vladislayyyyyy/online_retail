@@ -79,14 +79,7 @@
 > **Инсайт:** Выручка росла равномерно, без резких провалов, что говорит о стабильном спросе.  
 > Рекомендуется планировать маркетинговые активности на первую половину месяца, чтобы успеть к пику.
 
-
-
 📁 [05_advanced_window_functions.sql](cumulative_revenue_sql)  
-
-
-📁 [05_advanced_window_functions.sql](05_advanced_window_functions.sql)
-
-
 
 
 
