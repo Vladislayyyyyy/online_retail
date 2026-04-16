@@ -81,10 +81,23 @@
 
 📁 [05_advanced_window_functions.sql](cumulative_revenue_sql)  
 
+## 🛒 Анализ совместных покупок (Basket Analysis)
 
+С помощью `JOIN` заказов самих на себя найдены пары товаров, которые покупают вместе.
 
+### Топ-5 товарных пар
 
-📁 [06_basket_analysis.sql](sql/06_basket_analysis.sql)
+|              Товар 1            |            Товар 2              | Совместных покупок |
+|---------------------------------|---------------------------------|--------------------|
+|     JUMBO BAG PINK POLKADOT     |     JUMBO BAG RED RETROSPOT     |        546         |  
+| GREEN REGENCY TEACUP AND SAUCER | ROSES REGENCY TEACUP AND SAUCER |        541         | 
+|   ALARM CLOCK BAKELIKE GREEN    |    ALARM CLOCK BAKELIKE RED     |        530         | 
+
+### Рекомендации
+- Разместить блок «С этим товаром часто покупают» на карточках товаров‑лидеров.
+- Сформировать готовые наборы (бандлы) со скидкой для увеличения среднего чека.
+
+📁 [06_basket_analysis.sql](Basket_Analysis_sql)
 
 ##  Технологии
 - **СУБД:** PostgreSQL
@@ -92,7 +105,7 @@
 
 ##  Как запустить
 1. Установите PostgreSQL и создайте базу данных.
-2. Скачайте датасет [online_retail.csv](https://archive.ics.uci.edu/static/public/352/online+retail.zip) и поместите в папку, доступную для импорта.
+2. Скачайте датасет [online_retail.csv]([https://archive.ics.uci.edu/static/public/352/online+retail.zip](https://www.kaggle.com/datasets/mohadesehemamipour/online-retail-personalized-product-recommendation)) и поместите в папку, доступную для импорта.
 3. Выполните скрипты из папки `sql/` по порядку.
 
 ##  Визуализация (опционально)
